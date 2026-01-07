@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: stock-tracker
+resources:
+  - namespace.yaml
+  - expo_notification_backend_depl.yaml
+# Optionally override the image at apply-time with:
+# kustomize edit set image expo-notification-backend=YOUR_DOCKERHUB_USERNAME/expo-notification-backend:TAG
+# or via kubectl: kubectl -n stock-tracker set image deploy/expo-notification-backend expo-notification-backend=YOUR_DOCKERHUB_USERNAME/expo-notification-backend:TAG

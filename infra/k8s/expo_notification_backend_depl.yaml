@@ -1,0 +1,70 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expo-notification-backend
+  labels:
+    app: expo-notification-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: expo-notification-backend
+  template:
+    metadata:
+      labels:
+        app: expo-notification-backend
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: expo-notification-backend
+          # Replace YOUR_DOCKERHUB_USERNAME or use kustomize image overrides
+          image: goodmanisltd/expo-notification-backend:latest
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: expo-notification-secrets
+          # resources:
+          #   requests:
+          #     cpu: 50m
+          #     memory: 128Mi
+          #   limits:
+          #     cpu: 250m
+          #     memory: 256Mi
+          # Probes: HTTP /healthz on port 3099
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3099
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3099
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          env:
+            - name: HEALTH_PORT
+              value: "3099"
+          ports:
+            - name: http
+              containerPort: 3099
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: expo-notification-backend
+  labels:
+    app: expo-notification-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: expo-notification-backend
+  ports:
+    - name: http
+      port: 3099
+      targetPort: 3099

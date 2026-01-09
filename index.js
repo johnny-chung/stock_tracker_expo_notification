@@ -52,12 +52,6 @@ function startHealthServer() {
 }
 
 async function main() {
-  if (!process.env.EXPO_PUSH_TOKEN) {
-    console.error(
-      "Missing EXPO_PUSH_TOKEN. Set it to your device token, e.g. ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]"
-    );
-    process.exit(1);
-  }
   await connectMongo();
   streams = await startWatchers();
   console.log("Change stream watchers started. Service is running...");
